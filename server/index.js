@@ -9,7 +9,9 @@ const PORT = process.env.PORT || 8791;
 // real throughput, so there's no good reason to cap this low — analysis is a
 // foreground task the user is actively waiting on.)
 const POOL_SIZE = Math.max(1, Math.min(os.cpus().length - 1, 15));
-const DEFAULT_DEPTH = 18;
+// chess.com's own docs state they see "diminishing returns... past the low
+// 20's" for their server-side Game Review — 18 was noticeably shallower.
+const DEFAULT_DEPTH = 20;
 
 console.log(`Starting engine pool: ${POOL_SIZE} Stockfish workers (of ${os.cpus().length} cores)`);
 const pool = new EnginePool({ size: POOL_SIZE, threadsPerEngine: 1, hash: 64, multiPv: 2 });

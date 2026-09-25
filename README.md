@@ -92,6 +92,17 @@ C'est la même logique que chess.com/Lichess, en deux étapes :
 - Toutes les autres catégories (Meilleur coup, Excellent, Bon, Imprécision,
   Erreur, Gaffe, Occasion manquée) reposent directement sur l'éval Stockfish
   et la formule ci-dessus — c'est la partie fiable et vérifiée.
+- **Le pourcentage de précision lui-même lira presque toujours un peu plus
+  généreux que celui de chess.com.** Ce n'est pas un bug qu'on peut corriger :
+  chess.com confirme dans sa propre documentation que son score CAPS2 est
+  *volontairement recalibré* (non public) pour que la plupart des scores
+  tombent entre 50 et 95, spécifiquement pour éviter qu'une partie très bonne
+  mais pas parfaite arrondisse à 99,9 — ce que faisait leur ancienne version
+  CAPS1. On utilise la formule publique de Lichess (la seule documentée),
+  qui n'a pas cette recalibration. Deux retours indépendants trouvés en
+  ligne donnent un écart d'environ 15 points sur la même partie (74% chess.com
+  vs 89% Lichess ; 77% vs 92%) — mais ce n'est que 2 exemples anecdotiques,
+  pas une mesure fiable, donc on ne l'a pas appliqué par défaut.
 
 ## Démarrage automatique du serveur (optionnel)
 

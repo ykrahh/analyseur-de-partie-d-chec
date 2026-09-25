@@ -15,10 +15,18 @@ export function sideToMoveIsWhite(fen) {
   return fen.split(" ")[1] === "w";
 }
 
-/** Centipawns (from some perspective) -> win% for that same perspective. */
+/** Centipawns (from some perspective) -> win% for that same perspective.
+ *
+ * Note: earlier versions clamped cp to ±1000 before the sigmoid. That flattened
+ * any two "already winning big" evaluations (say +900 vs +1400) to nearly the
+ * same win%, which is documented as the main reason Lichess's public accuracy
+ * formula reads noticeably more generous than chess.com's CAPS2 for the same
+ * game (both use a win%-based accuracy, but CAPS2 keeps penalizing suboptimal
+ * play once a position is winning, instead of treating it as "good enough").
+ * Removing the clamp lets the sigmoid's own natural saturation do that job —
+ * it still asymptotes near 0/100, just without an extra artificial floor. */
 export function cpToWinPercent(cp) {
-  const clamped = Math.max(-1000, Math.min(1000, cp));
-  return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * clamped)) - 1);
+  return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * cp)) - 1);
 }
 
 /**
@@ -29,7 +37,14 @@ export function cpToWinPercent(cp) {
 export function lineToWinPercent(line) {
   if (!line) return 50;
   if (line.mate !== null && line.mate !== undefined) {
-    return line.mate > 0 ? 99.9 : 0.1;
+    // A flat 99.9%/0.1% regardless of mate distance hides real differences:
+    // letting a mate-in-2 slip to a mate-in-15 (still winning, but a real
+    // step down) would otherwise show as zero loss. Map mate distance to an
+    // equivalent centipawn score and run it through the same curve instead —
+    // short mates read as ~99%+, long ones taper down but never below a
+    // floor (a found forced mate is still a very good position).
+    const magnitude = Math.max(400, 2500 - Math.abs(line.mate) * 100);
+    return cpToWinPercent(line.mate > 0 ? magnitude : -magnitude);
   }
   return cpToWinPercent(line.cp ?? 0);
 }
