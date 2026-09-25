@@ -1,0 +1,14 @@
+{
+  "name": "chess-analyzer-server",
+  "version": "1.0.0",
+  "description": "Local Stockfish analysis server for chess.com game review",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5"
+  }
+}

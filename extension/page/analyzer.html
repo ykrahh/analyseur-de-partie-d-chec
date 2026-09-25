@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Analyseur d'échecs (Stockfish local)</title>
+<link rel="stylesheet" href="analyzer.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">♞</span>
+      <span>Analyseur d'échecs — Stockfish local</span>
+    </div>
+    <div class="engine-status" id="engineStatus">
+      <span class="dot" id="engineDot"></span>
+      <span id="engineStatusText">Vérification du moteur…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>Tes parties</h2>
+        <div class="field-row">
+          <input id="usernameInput" type="text" placeholder="Pseudo chess.com" autocomplete="off" />
+          <button id="loadGamesBtn">Charger</button>
+        </div>
+        <p class="hint" id="loadHint"></p>
+        <div id="gamesList" class="games-list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Réglages du moteur</h2>
+        <label class="field-row">
+          <span>Profondeur</span>
+          <select id="depthSelect">
+            <option value="14">Rapide (14)</option>
+            <option value="18" selected>Équilibré (18)</option>
+            <option value="22">Profond (22, lent)</option>
+          </select>
+        </label>
+      </section>
+    </aside>
+
+    <section class="main-panel">
+      <div id="emptyState" class="empty-state">
+        <p>Charge tes parties à gauche, puis clique sur une partie pour l'analyser.</p>
+        <p class="hint">Le serveur Stockfish local doit tourner sur <code>127.0.0.1:8791</code>.</p>
+      </div>
+
+      <div id="gameView" class="game-view" hidden>
+        <div class="game-header">
+          <div class="players">
+            <div class="player white"><span class="swatch"></span><span id="whiteName">Blancs</span></div>
+            <span class="vs">vs</span>
+            <div class="player black"><span class="swatch"></span><span id="blackName">Noirs</span></div>
+          </div>
+          <div class="meta" id="gameMeta"></div>
+          <button id="analyzeBtn">Analyser cette partie</button>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap" hidden>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <span id="progressText"></span>
+        </div>
+
+        <div class="accuracy-row" id="accuracyRow" hidden>
+          <div class="accuracy-card white">
+            <span class="label">Précision Blancs</span>
+            <span class="value" id="whiteAccuracy">–</span>
+          </div>
+          <div class="accuracy-card black">
+            <span class="label">Précision Noirs</span>
+            <span class="value" id="blackAccuracy">–</span>
+          </div>
+        </div>
+
+        <div class="counts-columns" id="countsColumns" hidden>
+          <div class="counts-column">
+            <h3><span class="swatch white-swatch"></span>Blancs</h3>
+            <div class="counts-row" id="countsWhite"></div>
+          </div>
+          <div class="counts-column">
+            <h3><span class="swatch black-swatch"></span>Noirs</h3>
+            <div class="counts-row" id="countsBlack"></div>
+          </div>
+        </div>
+
+        <div class="board-and-moves">
+          <div class="board-column">
+            <canvas id="evalGraph" width="480" height="70"></canvas>
+            <div class="board-player-row">
+              <img id="opponentAvatarImg" class="player-avatar" alt="Avatar adversaire" src="../assets/avatar-opponent.jpg" />
+              <span id="opponentNameLabel" class="player-label"></span>
+            </div>
+            <div class="board-with-bar">
+              <div class="eval-bar"><div class="eval-bar-fill" id="evalBarFill"></div></div>
+              <div id="board" class="board"></div>
+            </div>
+            <div class="board-player-row">
+              <img id="userAvatarImg" class="player-avatar" alt="Avatar" src="../assets/avatar-normal.jpg" />
+              <span id="userNameLabel" class="player-label"></span>
+            </div>
+            <div class="board-controls">
+              <button id="prevBtn">◀</button>
+              <button id="playBtn">▶ Autoplay</button>
+              <button id="nextBtn">▶</button>
+            </div>
+            <div id="moveDetail" class="move-detail"></div>
+          </div>
+          <div class="moves-column">
+            <ol id="movesList" class="moves-list"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
